@@ -1,4 +1,4 @@
-using SurveyBasket.Api.Middlwares;
+
 using SurveyBasket.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,10 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IPollService, PollService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IOS, MacOS>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -19,7 +19,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CustomMiddleWare>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
