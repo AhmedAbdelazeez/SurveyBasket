@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Api.Services;
+﻿using SurveyBasket.Api.Mapping;
+using SurveyBasket.Api.Services;
 
 namespace SurveyBasket.Api.Controllers
 {
@@ -16,29 +17,29 @@ namespace SurveyBasket.Api.Controllers
         [HttpGet(template: "GetAll")]
         public IActionResult GetAll()
         {
-            return Ok(_poolService.GetAll());
+            var polls = _poolService.GetAll();
+            return Ok(polls.MappToResponse());
         }
 
         [HttpGet(template: "{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get([FromRoute] int id)
         {
-
-
-            return Ok(_poolService.GetById(id));
+            var poll = _poolService.GetById(id);
+            return poll is null ? NotFound() : Ok(poll.MappToResponse());
         }
 
-        [HttpPost]
-        public IActionResult Add(Poll request)
+        [HttpPost, Route("Add")]
+        public IActionResult Add(CreatePollRequest request)
         {
-            var newPoll = _poolService.Add(request);
+            var newPoll = _poolService.Add(request.MappToPoll());
 
             return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
         }
 
         [HttpPut(template: "{id}")]
-        public IActionResult Update(int id, Poll poll)
+        public IActionResult Update([FromRoute] int id, [FromBody] CreatePollRequest poll)
         {
-            bool isupdate = _poolService.Update(id, poll);
+            bool isupdate = _poolService.Update(id, poll.MappToPoll());
             if (!isupdate)
             {
                 return NotFound();
@@ -49,7 +50,7 @@ namespace SurveyBasket.Api.Controllers
 
         [HttpDelete(template: "{id}")]
 
-        public IActionResult Delete(int id)
+        public IActionResult Delete([FromRoute] int id)
         {
             bool isDeleted = _poolService.Delete(id);
 
