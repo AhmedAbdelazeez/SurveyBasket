@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Api.Mapping;
-using SurveyBasket.Api.Services;
+﻿
 
 namespace SurveyBasket.Api.Controllers
 {
@@ -18,28 +17,32 @@ namespace SurveyBasket.Api.Controllers
         public IActionResult GetAll()
         {
             var polls = _poolService.GetAll();
-            return Ok(polls.MappToResponse());
+            var response = polls.Adapt<IEnumerable<Poll>>();
+            return Ok(response);
         }
 
         [HttpGet(template: "{id}")]
         public IActionResult Get([FromRoute] int id)
         {
             var poll = _poolService.GetById(id);
-            return poll is null ? NotFound() : Ok(poll.MappToResponse());
+
+            //  var response = poll.Adapt<PollResponse>(config);
+            return poll is null ? NotFound() : Ok(poll);
         }
 
         [HttpPost, Route("Add")]
-        public IActionResult Add(CreatePollRequest request)
+        public IActionResult Add([FromBody] CreatePollRequest request)
         {
-            var newPoll = _poolService.Add(request.MappToPoll());
+            var mapprequest = request.Adapt<Poll>();
+            var newPoll = _poolService.Add(mapprequest);
 
             return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
         }
 
         [HttpPut(template: "{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] CreatePollRequest poll)
+        public IActionResult Update([FromRoute] int id, [FromBody] CreatePollRequest request)
         {
-            bool isupdate = _poolService.Update(id, poll.MappToPoll());
+            bool isupdate = _poolService.Update(id, request.Adapt<Poll>());
             if (!isupdate)
             {
                 return NotFound();
@@ -61,6 +64,22 @@ namespace SurveyBasket.Api.Controllers
 
             return Ok();
 
+        }
+
+        [HttpGet]
+        public IActionResult test()
+        {
+            Student student = new Student()
+            {
+                Id = 1,
+                FirstName = "Ahmed",
+                LastName = "Abdelaziz",
+                dateofbirth = new DateTime(1999, 1, 1),
+            };
+
+            var mappsutden = student.Adapt<StudentResponse>();
+
+            return Ok(mappsutden);
         }
 
     }
