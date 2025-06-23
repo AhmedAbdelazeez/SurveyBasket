@@ -31,10 +31,7 @@
         [HttpPost, Route("Add")]
         public IActionResult Add([FromBody] CreatePollRequest request)
         {
-
-            var mapprequest = request.Adapt<Poll>();
-            var newPoll = _poolService.Add(mapprequest);
-
+            var newPoll = _poolService.Add(request.Adapt<Poll>());
             return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
         }
 
@@ -55,21 +52,12 @@
         public IActionResult Delete([FromRoute] int id)
         {
             bool isDeleted = _poolService.Delete(id);
-
             if (!isDeleted)
             {
                 return NotFound();
             }
 
             return Ok();
-
         }
-
-        [HttpPost("Test")]
-        public IActionResult test([FromBody] Student student)
-        {
-            return Ok(student);
-        }
-
     }
 }

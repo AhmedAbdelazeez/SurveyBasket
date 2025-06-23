@@ -10,6 +10,9 @@ namespace SurveyBasket.Api.Contracts.Validation
                 .NotEmpty()
                 .Length(3, 100);
 
+            RuleFor(s => s.Title)
+             .NotEmpty()
+             .Length(3, 1000);
         }
     }
 }
