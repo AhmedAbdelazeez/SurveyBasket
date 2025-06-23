@@ -1,6 +1,4 @@
-﻿
-
-namespace SurveyBasket.Api.Controllers
+﻿namespace SurveyBasket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -33,6 +31,7 @@ namespace SurveyBasket.Api.Controllers
         [HttpPost, Route("Add")]
         public IActionResult Add([FromBody] CreatePollRequest request)
         {
+
             var mapprequest = request.Adapt<Poll>();
             var newPoll = _poolService.Add(mapprequest);
 
@@ -66,20 +65,10 @@ namespace SurveyBasket.Api.Controllers
 
         }
 
-        [HttpGet]
-        public IActionResult test()
+        [HttpPost("Test")]
+        public IActionResult test([FromBody] Student student)
         {
-            Student student = new Student()
-            {
-                Id = 1,
-                FirstName = "Ahmed",
-                LastName = "Abdelaziz",
-                dateofbirth = new DateTime(1999, 1, 1),
-            };
-
-            var mappsutden = student.Adapt<StudentResponse>();
-
-            return Ok(mappsutden);
+            return Ok(student);
         }
 
     }
